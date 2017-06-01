@@ -1,6 +1,7 @@
 #ifndef __UDPCLIENT_H__
 #define __UDPCLIENT_H__
 
+#include <winsock2.h> 
 #include <stdio.h>
 #include <thread>
 #include <mutex>

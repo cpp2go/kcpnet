@@ -2,8 +2,6 @@
 
 服务端测试 server.cpp
 
-#include "udpserver.h"
-
 class sertask :public udptask
 {
 public:
@@ -19,16 +17,18 @@ public:
 			delete udpsock;
 		}
 	}
-
+	virtual bool isclose()
+	{
+		return true;
+	}
 	virtual int parsemsg(const char *buf, int len)
 	{
-		printf("收到数据 %s,%d\n", buf, len);
+		printf("收到数据 %s,%d,%d\n", buf, len);
 		return 0;
 	}
 private:
 	udpsocket *udpsock;
 };
-
 
 int main(int argc, char *argv[])
 {
@@ -37,8 +37,6 @@ int main(int argc, char *argv[])
 
 	udpserver<sertask> s;
 	s.bind("127.0.0.1", 9001);
-
-	IUINT32 index = 0;
 
 	for (;;)
 	{
@@ -77,11 +75,12 @@ int main(int argc, char *argv[])
 	WSADATA wsaData;
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
 
+	srand((unsigned)time(NULL));
+
 	udpclient<clitask> c;
-	c.connect("127.0.0.1", 9001);
+	c.connect("127.0.0.1", 9001, rand());
 
 	IUINT32 index = 0;
-
 	for (;;)
 	{
 		char buf[1024] = {};

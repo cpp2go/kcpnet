@@ -36,9 +36,18 @@ public:
 		{
 			_mutex.lock();
 			for (std::map<IUINT32, udptask*>::iterator iter = clients.begin();
-				iter != clients.end(); ++iter)
+				iter != clients.end();)
 			{
-				iter->second->timerloop();
+				if (iter->second->isclose())
+				{
+					delete iter->second;
+					iter = clients.erase(iter);
+				}
+				else
+				{
+					iter->second->timerloop();
+					++iter;
+				}
 			}
 			_mutex.unlock();
 			std::chrono::milliseconds dura(1);

@@ -12,7 +12,7 @@ class udpclient
 {
 public:
 	udpclient()	{}
-	bool connect(const char *addr, unsigned short int port)
+	bool connect(const char *addr, unsigned short int port, IUINT32 conv)
 	{
 		if (!udpsock.connect(addr, port))
 		{
@@ -20,7 +20,7 @@ public:
 		}
 
 		utask = new T;
-		if (!utask->init(123456, &udpsock))
+		if (!utask->init(conv, &udpsock))
 		{
 			return false;
 		}

@@ -129,6 +129,7 @@ public:
 	}
 
 public:
+	virtual bool isclose() { return false; }
 	virtual int parsemsg(const char *buf, int len) = 0;
 
 private:

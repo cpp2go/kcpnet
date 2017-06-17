@@ -69,7 +69,7 @@ public:
 
 	void run()
 	{
-		char buff[10240] = { 0 };
+		char buff[65536] = { 0 };
 		struct sockaddr_in seraddr;
 		for (; !isstop;)
 		{

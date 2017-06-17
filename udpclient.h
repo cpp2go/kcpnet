@@ -1,7 +1,9 @@
 #ifndef __UDPCLIENT_H__
 #define __UDPCLIENT_H__
 
-#include <winsock2.h> 
+#ifdef _WIN32
+#include <winsock2.h>
+#endif
 #include <stdio.h>
 #include <thread>
 #include <mutex>
@@ -47,10 +49,10 @@ public:
 		return ret;
 	}
 
-	void close()
+	void shutdown()
 	{
 		isstop = true;
-		udpsock.close();
+		udpsock.shutdown();
 		_thread.join();
 		_threadtm.join();
 	}
@@ -73,7 +75,7 @@ public:
 		struct sockaddr_in seraddr;
 		for (; !isstop;)
 		{
-			int len = sizeof(struct sockaddr_in);
+			socklen_t len = sizeof(struct sockaddr_in);
 			int size = udpsock.recvfrom(buff, sizeof(buff), (struct sockaddr*)&seraddr, &len);
 			if (size == 0)
 			{
@@ -81,7 +83,7 @@ public:
 			}
 			if (size < 0)
 			{
-				printf("接收失败 %d,%d \n", udpsock, size);
+				printf("鎺ユ敹澶辫触 %d,%d \n", udpsock.getsocket(), size);
 				continue;
 			}
 			_mutex.lock();
@@ -100,7 +102,7 @@ public:
 
 	virtual int parsemsg(const char *buf, int len)
 	{
-		printf("收到数据 %s,%d\n", buf, len);
+		printf("鏀跺埌鏁版嵁 %s,%d\n", buf, len);
 		return 0;
 	}
 private:

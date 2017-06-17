@@ -1,8 +1,27 @@
 #ifndef __UDPSOCKET_H__
 #define __UDPSOCKET_H__
 
+#ifdef _WIN32
 #include <winsock2.h> 
 #pragma comment(lib,"ws2_32.lib")
+#define close(x) closesocket(x)
+typedef int socklen_t;
+#else
+#include <netinet/in.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <sys/epoll.h>
+#include <sys/ioctl.h>
+#include <net/if.h>
+#include <errno.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
+typedef int SOCKET;
+#endif
 
 class udpsocket
 {
@@ -35,7 +54,7 @@ public:
 
 		memset(&sockaddr, 0, sizeof(sockaddr));
 		sockaddr.sin_family = AF_INET;
-		sockaddr.sin_addr.S_un.S_addr = inet_addr(addr);
+		sockaddr.sin_addr.s_addr = inet_addr(addr);
 		sockaddr.sin_port = htons(port);
 		if (::bind(udpsock, (struct sockaddr*)&sockaddr, sizeof(struct sockaddr)) < 0)
 		{
@@ -54,18 +73,18 @@ public:
 
 		memset(&sockaddr, 0, sizeof(sockaddr));
 		sockaddr.sin_family = AF_INET;
-		sockaddr.sin_addr.S_un.S_addr = inet_addr(addr);
+		sockaddr.sin_addr.s_addr = inet_addr(addr);
 		sockaddr.sin_port = htons(port);
 
 		return true;
 	}
 
-	void close()
+	void shutdown()
 	{
-		closesocket(udpsock);
+		::close(udpsock);
 	}
 
-	int recvfrom(char * buf, int len, struct sockaddr * from, int * fromlen)
+	int recvfrom(char * buf, int len, struct sockaddr * from, socklen_t* fromlen)
 	{
 		return ::recvfrom(udpsock, buf, len, 0, from, fromlen);
 	}

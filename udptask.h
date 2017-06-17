@@ -26,7 +26,7 @@ public:
 			ikcp_flush(kcp);
 			ikcp_release(kcp);
 		}
-		printf("¹Ø±ÕÁ¬½Ó %d\n", conv);
+		printf("å…³é—­è¿æ¥ %d\n", conv);
 	}
 
 	bool init(IUINT32 conv, udpsocket *udpsock,  int mode = 2)
@@ -49,32 +49,32 @@ public:
 		switch (mode)
 		{
 		case 0:
-			// Ä¬ÈÏÄ£Ê½
+			// é»˜è®¤æ¨¡å¼
 			ikcp_nodelay(kcp, 0, 10, 0, 0);
 			break;
 		case 1:
-			// ÆÕÍ¨Ä£Ê½£¬¹Ø±ÕÁ÷¿ØµÈ
+			// æ™®é€šæ¨¡å¼ï¼Œå…³é—­æµæ§ç­‰
 			ikcp_nodelay(kcp, 0, 10, 0, 1);
 			break;
 		case 2:
-			// Æô¶¯¿ìËÙÄ£Ê½
-			// µÚ¶ş¸ö²ÎÊı nodelay-ÆôÓÃÒÔºóÈô¸É³£¹æ¼ÓËÙ½«Æô¶¯
-			// µÚÈı¸ö²ÎÊı intervalÎªÄÚ²¿´¦ÀíÊ±ÖÓ£¬Ä¬ÈÏÉèÖÃÎª 10ms
-			// µÚËÄ¸ö²ÎÊı resendÎª¿ìËÙÖØ´«Ö¸±ê£¬ÉèÖÃÎª2
-			// µÚÎå¸ö²ÎÊı ÎªÊÇ·ñ½ûÓÃ³£¹æÁ÷¿Ø£¬ÕâÀï½ûÖ¹
+			// å¯åŠ¨å¿«é€Ÿæ¨¡å¼
+			// ç¬¬äºŒä¸ªå‚æ•° nodelay-å¯ç”¨ä»¥åè‹¥å¹²å¸¸è§„åŠ é€Ÿå°†å¯åŠ¨
+			// ç¬¬ä¸‰ä¸ªå‚æ•° intervalä¸ºå†…éƒ¨å¤„ç†æ—¶é’Ÿï¼Œé»˜è®¤è®¾ç½®ä¸º 10ms
+			// ç¬¬å››ä¸ªå‚æ•° resendä¸ºå¿«é€Ÿé‡ä¼ æŒ‡æ ‡ï¼Œè®¾ç½®ä¸º2
+			// ç¬¬äº”ä¸ªå‚æ•° ä¸ºæ˜¯å¦ç¦ç”¨å¸¸è§„æµæ§ï¼Œè¿™é‡Œç¦æ­¢
 			//ikcp_nodelay(kcp, 0, 10, 0, 0);
 			//ikcp_nodelay(kcp, 0, 10, 0, 1);
 			//ikcp_nodelay(kcp, 1, 10, 2, 1);
-			ikcp_nodelay(kcp, 1, 5, 1, 1); // ÉèÖÃ³É1´ÎACK¿çÔ½Ö±½ÓÖØ´«, ÕâÑù·´Ó¦ËÙ¶È»á¸ü¿ì. ÄÚ²¿Ê±ÖÓ5ºÁÃë.
+			ikcp_nodelay(kcp, 1, 5, 1, 1); // è®¾ç½®æˆ1æ¬¡ACKè·¨è¶Šç›´æ¥é‡ä¼ , è¿™æ ·ååº”é€Ÿåº¦ä¼šæ›´å¿«. å†…éƒ¨æ—¶é’Ÿ5æ¯«ç§’.
 
 			kcp->rx_minrto = 10;
 			kcp->fastresend = 1;
 			break;
 		default:
-			printf("%d,%d Ä£Ê½´íÎó!\n", conv,mode);
+			printf("%d,%d æ¨¡å¼é”™è¯¯!\n", conv,mode);
 		}
 
-		printf("ĞÂ½¨Á¬½Ó %d\n", conv);
+		printf("æ–°å»ºè¿æ¥ %d\n", conv);
 		return true;
 	}
 
@@ -97,7 +97,7 @@ public:
 			nexttime = iclock();
 			alivetime = nexttime + 10000;
 		}
-		//printf("·¢ËÍÊı¾İ %d,%d,%d\n", conv, len, nret);
+		//printf("å‘é€æ•°æ® %d,%d,%d\n", conv, len, nret);
 		return nret;
 	}
 
@@ -124,7 +124,7 @@ public:
 			{
 				if (nrecv == -3)
 				{
-					printf("bufferÌ«Ğ¡ %d,%d\n", conv, sizeof(buffer));
+					printf("bufferå¤ªå° %d,%d\n", conv, sizeof(buffer));
 				}
 				break;
 			}

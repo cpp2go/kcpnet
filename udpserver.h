@@ -1,7 +1,9 @@
 #ifndef __UDPSERVER_H__
 #define __UDPSERVER_H__
 
-#include <winsock2.h> 
+#ifdef _WIN32
+#include <winsock2.h>
+#endif
 #include <stdio.h>
 #include <thread>
 #include <mutex>
@@ -18,7 +20,7 @@ public:
 		isstop = false;
 		_thread = std::thread(std::bind(&handlethread::loop, this));
 	}
-	void close()
+	void shutdown()
 	{
 		isstop = true;
 		_thread.join();
@@ -103,15 +105,15 @@ public:
 		return true;
 	}
 
-	void close()
+	void shutdown()
 	{
 		isstop = true;
-		udpsock.close();
+		udpsock.shutdown();
 		_thread.join();
-		for (std::vector<handlethread<T>*>::iterator iter = timerthreads.begin();
+		for (typename  std::vector<handlethread<T>*>::iterator iter = timerthreads.begin();
 			iter != timerthreads.end(); ++iter)
 		{
-			(*iter)->close();
+			(*iter)->shutdown();
 			delete *iter;
 		}
 	}
@@ -122,7 +124,7 @@ public:
 		struct sockaddr_in cliaddr;
 		for (; !isstop;)
 		{
-			int len = sizeof(struct sockaddr_in);
+			socklen_t len = sizeof(struct sockaddr_in);
 			int size = udpsock.recvfrom(buff, sizeof(buff), (struct sockaddr*)&cliaddr, &len);
 			if (size == 0)
 			{
@@ -130,7 +132,7 @@ public:
 			}
 			if (size < 0)
 			{
-				printf("½ÓÊÕÊ§°Ü %d,%d \n", udpsock, size);
+				printf("æŽ¥æ”¶å¤±è´¥ %d,%d \n", udpsock.getsocket(), size);
 				continue;
 			}
 			IUINT32 conv = ikcp_getconv(buff);

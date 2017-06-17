@@ -38,7 +38,7 @@ public:
 			for (std::map<IUINT32, udptask*>::iterator iter = clients.begin();
 				iter != clients.end();)
 			{
-				if (iter->second->isclose())
+				if (!iter->second->isalive())
 				{
 					delete iter->second;
 					iter = clients.erase(iter);
@@ -50,7 +50,7 @@ public:
 				}
 			}
 			_mutex.unlock();
-			std::chrono::milliseconds dura(1);
+			std::chrono::microseconds dura(10);
 			std::this_thread::sleep_for(dura);
 		}
 	}
@@ -118,7 +118,7 @@ public:
 
 	void run()
 	{
-		char buff[1024] = { 0 };
+		char buff[65536] = { 0 };
 		struct sockaddr_in cliaddr;
 		for (; !isstop;)
 		{
@@ -130,8 +130,8 @@ public:
 			}
 			if (size < 0)
 			{
-				printf("接收失败 %d \n", udpsock);
-				break;
+				printf("接收失败 %d,%d \n", udpsock, size);
+				continue;
 			}
 			IUINT32 conv = ikcp_getconv(buff);
 			timerthreads[conv % maxtdnum]->recv(udpsock.getsocket(), &cliaddr, conv, buff, size);

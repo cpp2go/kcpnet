@@ -11,7 +11,14 @@ template<typename T>
 class udpclient 
 {
 public:
-	udpclient()	{}
+	udpclient() :utask(NULL){}
+	~udpclient()
+	{
+		if (utask != NULL)
+		{
+			delete utask;
+		}
+	}
 	bool connect(const char *addr, unsigned short int port, IUINT32 conv)
 	{
 		if (!udpsock.connect(addr, port))
@@ -46,7 +53,6 @@ public:
 		udpsock.close();
 		_thread.join();
 		_threadtm.join();
-		delete utask;
 	}
 
 	void loop()
@@ -63,7 +69,7 @@ public:
 
 	void run()
 	{
-		char buff[1024] = { 0 };
+		char buff[10240] = { 0 };
 		struct sockaddr_in seraddr;
 		for (; !isstop;)
 		{
@@ -75,13 +81,21 @@ public:
 			}
 			if (size < 0)
 			{
-				printf("接收失败 %d \n", udpsock);
-				break;
+				printf("接收失败 %d,%d \n", udpsock, size);
+				continue;
 			}
 			_mutex.lock();
 			utask->recv(buff, size);
 			_mutex.unlock();
 		}
+	}
+
+	bool isalive()
+	{
+		_mutex.lock();
+		bool alive = utask->isalive();
+		_mutex.unlock();
+		return alive;
 	}
 
 	virtual int parsemsg(const char *buf, int len)

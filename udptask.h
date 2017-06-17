@@ -13,7 +13,9 @@ public:
 	{
 		conv = 0;
 		kcp = NULL;
+		current = 0;
 		nexttime = 0;
+		alivetime = nexttime + 10000;
 		memset(buffer, 0, sizeof(buffer));
 	}
 
@@ -82,6 +84,7 @@ public:
 		if (nret == 0)
 		{
 			nexttime = iclock();
+			alivetime = nexttime + 10000;
 		}
 		return nret;
 	}
@@ -92,14 +95,15 @@ public:
 		if (nret == 0)
 		{
 			nexttime = iclock();
+			alivetime = nexttime + 10000;
 		}
-		printf("发送数据 %d,%s\n", conv, buf);
+		//printf("发送数据 %d,%d,%d\n", conv, len, nret);
 		return nret;
 	}
 
 	void timerloop()
 	{
-		IUINT32 current = iclock();
+		current = iclock();
 
 		if (nexttime > current)
 		{
@@ -129,7 +133,10 @@ public:
 	}
 
 public:
-	virtual bool isclose() { return false; }
+	virtual bool isalive() 
+	{
+		return alivetime > current;
+	}
 	virtual int parsemsg(const char *buf, int len) = 0;
 
 private:
@@ -147,7 +154,9 @@ private:
 	IUINT32 conv;
 	ikcpcb *kcp;
 	IUINT32 nexttime;
-	char buffer[10240];
+	IUINT32 current;
+	IUINT32 alivetime;
+	char buffer[65536];
 };
 
 #endif
